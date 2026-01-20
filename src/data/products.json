@@ -1,0 +1,35 @@
+[
+	{
+		"id": 2,
+		"title": "Mouse Inalámbrico",
+		"description": "Mouse ergonómico con batería de larga duración",
+		"code": "MSE-002",
+		"price": 25,
+		"status": true,
+		"stock": 50,
+		"category": "Accesorios",
+		"thumbnails": []
+	},
+	{
+		"id": 3,
+		"title": "Teclado Mecánico",
+		"description": "Teclado con luces RGB y switches azules",
+		"code": "KEY-003",
+		"price": 80,
+		"status": true,
+		"stock": 20,
+		"category": "Periféricos",
+		"thumbnails": []
+	},
+	{
+		"id": 4,
+		"status": true,
+		"thumbnails": [],
+		"title": "Celular Samsung",
+		"description": "Gama media alta, 128GB",
+		"code": "SAM-123",
+		"price": 450,
+		"stock": 25,
+		"category": "Celulares"
+	}
+]
