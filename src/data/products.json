@@ -31,5 +31,16 @@
 		"price": 450,
 		"stock": 25,
 		"category": "Celulares"
+	},
+	{
+		"id": 5,
+		"status": true,
+		"thumbnails": [],
+		"title": "Teclado Mecánico",
+		"description": "Teclado gamer con luces RGB",
+		"code": "TEC-001",
+		"price": 150,
+		"stock": 30,
+		"category": "Perifericos"
 	}
 ]

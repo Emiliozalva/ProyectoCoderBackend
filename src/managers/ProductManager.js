@@ -1,77 +1,71 @@
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+import { productModel } from '../models/product.model.js';
 
 class ProductManager {
-    constructor() {
-
-        this.path = path.join(__dirname, '../data/products.json');
-    }
-
-    async getProducts() {
+    // 1. OBTENER PRODUCTOS CON FILTROS Y PAGINACIÓN
+    async getProducts(limit = 10, page = 1, sort, query) {
         try {
-            if (fs.existsSync(this.path)) {
-                const data = await fs.promises.readFile(this.path, 'utf-8');
-                return JSON.parse(data);
+            let filter = {};
+            if (query) {
+                if (query === 'true' || query === 'false') {
+                    filter.status = query === 'true';
+                } else {
+                    filter.category = query;
+                }
             }
-            console.log("No se encontró el archivo en:", this.path);
-            return [];
-        } catch (error) {
-            console.error("Error al leer productos:", error);
-            return [];
-        }
-    }
 
-    async addProduct(product) {
-        const products = await this.getProducts();
-        
-        if (!product.title || !product.description || !product.price || !product.code || !product.stock || !product.category) {
-            console.log("Faltan campos obligatorios");
+            const options = {
+                limit: parseInt(limit),
+                page: parseInt(page),
+                lean: true
+            };
+
+            if (sort) {
+                options.sort = { price: sort === 'asc' ? 1 : -1 }; 
+            }
+
+            return await productModel.paginate(filter, options);
+        } catch (error) {
+            console.error("Error en getProducts:", error);
             return null;
         }
-
-        const newId = products.length > 0 ? products[products.length - 1].id + 1 : 1;
-        const newProduct = {
-            id: newId,
-            status: true,
-            thumbnails: product.thumbnails || [],
-            ...product
-        };
-
-        products.push(newProduct);
-        await fs.promises.writeFile(this.path, JSON.stringify(products, null, '\t'));
-        return newProduct;
     }
 
+    // 2. BUSCAR POR ID
     async getProductById(id) {
-        const products = await this.getProducts();
-        const product = products.find(p => p.id === id);
-        return product || null;
+        try {
+            return await productModel.findById(id).lean();
+        } catch (error) {
+            return null;
+        }
     }
 
+    // 3. AGREGAR PRODUCTO
+    async addProduct(product) {
+        try {
+            return await productModel.create(product);
+        } catch (error) {
+            console.error("Error al crear producto:", error.message);
+            return null;
+        }
+    }
+
+    // 4. ACTUALIZAR PRODUCTO
     async updateProduct(id, updateFields) {
-        const products = await this.getProducts();
-        const index = products.findIndex(p => p.id === id);
-        if (index === -1) return null;
-
-        const { id: _, ...rest } = updateFields; 
-        products[index] = { ...products[index], ...rest };
-        
-        await fs.promises.writeFile(this.path, JSON.stringify(products, null, '\t'));
-        return products[index];
+        try {
+            return await productModel.findByIdAndUpdate(id, updateFields, { new: true }).lean();
+        } catch (error) {
+            return null;
+        }
     }
 
+    // 5. BORRAR PRODUCTO
     async deleteProduct(id) {
-        const products = await this.getProducts();
-        const newProducts = products.filter(p => p.id !== id);
-
-        if (products.length === newProducts.length) return false;
-
-        await fs.promises.writeFile(this.path, JSON.stringify(newProducts, null, '\t'));
-        return true;
+        try {
+            const deleted = await productModel.findByIdAndDelete(id);
+            return deleted ? true : false;
+        } catch (error) {
+            return false;
+        }
     }
 }
 
