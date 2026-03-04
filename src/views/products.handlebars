@@ -1,0 +1,25 @@
+<h2>Nuestros Productos</h2>
+
+<div>
+    {{#each products}}
+        <div style="border: 1px solid black; padding: 10px; margin-bottom: 10px;">
+            <h3>{{this.title}}</h3>
+            <p>Precio: ${{this.price}}</p>
+            <p>Categoría: {{this.category}}</p>
+            <a href="/products/{{this._id}}">Ver Detalles</a>
+            <button onclick="alert('En un proyecto real, esto agregaría el ID {{this._id}} a tu carrito')">Agregar al carrito</button>
+        </div>
+    {{/each}}
+</div>
+
+<div style="margin-top: 20px;">
+    {{#if pagination.hasPrevPage}}
+        <a href="/products?page={{pagination.prevPage}}"><button>Anterior</button></a>
+    {{/if}}
+
+    <span style="margin: 0 10px;">Página {{pagination.page}} de {{pagination.totalPages}}</span>
+
+    {{#if pagination.hasNextPage}}
+        <a href="/products?page={{pagination.nextPage}}"><button>Siguiente</button></a>
+    {{/if}}
+</div>
